@@ -42,7 +42,7 @@ class CarSpecificEvents:
     self.cruise_buttons: deque = deque([], maxlen=HYUNDAI_PREV_BUTTON_SAMPLES)
 
   def update(self, CS: car.CarState, CS_prev: car.CarState, CC: car.CarControl):
-    if self.CP.brand in ('body', 'mock'):
+    if self.CP.brand in ('body', 'mock', 'turbo'):
       events = Events()
 
     elif self.CP.brand in ('subaru', 'mazda', 'tesla'):
