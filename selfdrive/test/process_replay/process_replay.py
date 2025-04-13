@@ -2,7 +2,6 @@
 import os
 import time
 import copy
-import json
 import heapq
 import signal
 from collections import Counter, OrderedDict
@@ -18,11 +17,11 @@ from cereal import car
 from cereal.services import SERVICE_LIST
 from msgq.visionipc import VisionIpcServer, get_endpoint_name as vipc_get_endpoint_name
 from opendbc.car.car_helpers import get_car, interfaces
+from opendbc.safety import ALTERNATIVE_EXPERIENCE
 from openpilot.common.params import Params
 from openpilot.common.prefix import OpenpilotPrefix
 from openpilot.common.timeout import Timeout
 from openpilot.common.realtime import DT_CTRL
-from panda.python import ALTERNATIVE_EXPERIENCE
 from openpilot.selfdrive.car.card import can_comm_callbacks
 from openpilot.system.manager.process_config import managed_processes
 from openpilot.selfdrive.test.process_replay.vision_meta import meta_from_camera_state, available_streams
@@ -342,7 +341,7 @@ def card_fingerprint_callback(rc, pm, msgs, fingerprint):
 def get_car_params_callback(rc, pm, msgs, fingerprint):
   params = Params()
   if fingerprint:
-    CarInterface, _, _, _ = interfaces[fingerprint]
+    CarInterface = interfaces[fingerprint]
     CP = CarInterface.get_non_essential_params(fingerprint)
   else:
     can = DummySocket()
@@ -517,9 +516,10 @@ CONFIGS = [
   ),
   ProcessConfig(
     proc_name="calibrationd",
-    pubs=["carState", "cameraOdometry", "carParams"],
+    pubs=["carState", "cameraOdometry"],
     subs=["liveCalibration"],
     ignore=["logMonoTime"],
+    init_callback=get_car_params_callback,
     should_recv_callback=calibration_rcv_callback,
   ),
   ProcessConfig(
@@ -568,7 +568,7 @@ CONFIGS = [
   ),
   ProcessConfig(
     proc_name="modeld",
-    pubs=["deviceState", "roadCameraState", "wideRoadCameraState", "liveCalibration", "driverMonitoringState", "carState"],
+    pubs=["deviceState", "roadCameraState", "wideRoadCameraState", "liveCalibration", "driverMonitoringState", "carState", "carControl"],
     subs=["modelV2", "drivingModelData", "cameraOdometry"],
     ignore=["logMonoTime", "modelV2.frameDropPerc", "modelV2.modelExecutionTime", "drivingModelData.frameDropPerc", "drivingModelData.modelExecutionTime"],
     should_recv_callback=ModeldCameraSyncRcvCallback(),
@@ -628,9 +628,7 @@ def get_custom_params_from_lr(lr: LogIterable, initial_state: str = "first") -> 
   if len(live_calibration) > 0:
     custom_params["CalibrationParams"] = live_calibration[msg_index].as_builder().to_bytes()
   if len(live_parameters) > 0:
-    lp_dict = live_parameters[msg_index].to_dict()
-    lp_dict["carFingerprint"] = CP.carFingerprint
-    custom_params["LiveParameters"] = json.dumps(lp_dict)
+    custom_params["LiveParameters"] = live_parameters[msg_index].as_builder().to_bytes()
   if len(live_torque_parameters) > 0:
     custom_params["LiveTorqueParameters"] = live_torque_parameters[msg_index].as_builder().to_bytes()
 
