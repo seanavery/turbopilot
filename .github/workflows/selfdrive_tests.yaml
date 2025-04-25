@@ -167,10 +167,13 @@ jobs:
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-amd64-8x16' || 'ubuntu-24.04' }}
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
     steps:
+    - name: Start SSH Agent
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        submodules: true
-        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        persist-credentials: false
     - name: Submodule update
       run: |
         git submodule update --init --recursive
@@ -198,10 +201,16 @@ jobs:
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-amd64-8x16' || 'ubuntu-24.04' }}
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
     steps:
+    - name: Start SSH Agent
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        submodules: true
-        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        persist-credentials: false
+    - name: Submodule update
+      run: |
+        git submodule update --init --recursive
     - uses: ./.github/workflows/setup-with-retry
     - name: Cache test routes
       id: dependency-cache
@@ -256,10 +265,16 @@ jobs:
       matrix:
         job: [0, 1, 2, 3]
     steps:
+    - name: Start SSH Agent
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        submodules: true
-        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        persist-credentials: false
+    - name: Submodule update
+      run: |
+        git submodule update --init --recursive
     - uses: ./.github/workflows/setup-with-retry
     - name: Cache test routes
       id: routes-cache
