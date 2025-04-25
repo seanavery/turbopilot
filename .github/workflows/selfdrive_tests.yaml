@@ -79,16 +79,10 @@ jobs:
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-amd64-8x16' || 'ubuntu-24.04' }}
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
     steps:
-    - name: Start SSH Agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        persist-credentials: false
-    - name: Submodule update
-      run: |
-        git submodule update --init --recursive
+        submodules: true
+        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Setup docker push
       if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && github.repository == 'commaai/openpilot'
       run: |
@@ -102,16 +96,10 @@ jobs:
     name: build macOS
     runs-on: ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-macos-8x14' || 'macos-latest' }}
     steps:
-    - name: Start SSH Agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        persist-credentials: false
-    - name: Submodule update
-      run: |
-        git submodule update --init --recursive
+        submodules: true
+        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - run: echo "CACHE_COMMIT_DATE=$(git log -1 --pretty='format:%cd' --date=format:'%Y-%m-%d-%H:%M')" >> $GITHUB_ENV
     - name: Homebrew cache
       uses: ./.github/workflows/auto-cache
@@ -146,16 +134,10 @@ jobs:
     env:
       PYTHONWARNINGS: default
     steps:
-    - name: Start SSH Agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        persist-credentials: false
-    - name: Submodule update
-      run: |
-        git submodule update --init --recursive
+        submodules: true
+        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - uses: ./.github/workflows/setup-with-retry
     - name: Static analysis
       timeout-minutes: 1
@@ -167,16 +149,10 @@ jobs:
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-amd64-8x16' || 'ubuntu-24.04' }}
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
     steps:
-    - name: Start SSH Agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        persist-credentials: false
-    - name: Submodule update
-      run: |
-        git submodule update --init --recursive
+        submodules: true
+        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - uses: ./.github/workflows/setup-with-retry
     - name: Build openpilot
       run: ${{ env.RUN }} "scons -j$(nproc)"
@@ -201,16 +177,10 @@ jobs:
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-amd64-8x16' || 'ubuntu-24.04' }}
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
     steps:
-    - name: Start SSH Agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        persist-credentials: false
-    - name: Submodule update
-      run: |
-        git submodule update --init --recursive
+        submodules: true
+        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - uses: ./.github/workflows/setup-with-retry
     - name: Cache test routes
       id: dependency-cache
@@ -265,16 +235,10 @@ jobs:
       matrix:
         job: [0, 1, 2, 3]
     steps:
-    - name: Start SSH Agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        persist-credentials: false
-    - name: Submodule update
-      run: |
-        git submodule update --init --recursive
+        submodules: true
+        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - uses: ./.github/workflows/setup-with-retry
     - name: Cache test routes
       id: routes-cache
@@ -305,16 +269,11 @@ jobs:
     #if: github.event_name == 'pull_request'
     if: false  # TODO: run this in opendbc?
     steps:
-      - name: Start SSH Agent
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
-      - name: Submodule update
-        run: |
-          git submodule update --init --recursive
+          submodules: true
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ref: ${{ github.event.pull_request.base.ref }}
       - run: git lfs pull
       - uses: ./.github/workflows/setup-with-retry
       - name: Get base car info
@@ -367,16 +326,9 @@ jobs:
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
     if: (github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))
     steps:
-    - name: Start SSH Agent
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        persist-credentials: false
-    - name: Submodule update
-      run: |
-        git submodule update --init --recursive
+        submodules: true
     - uses: ./.github/workflows/setup-with-retry
     - name: Build openpilot
       run: |
@@ -395,16 +347,9 @@ jobs:
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-amd64-8x16' || 'ubuntu-24.04' }}
       - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
     steps:
-      - name: Start SSH Agent
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
-      - name: Submodule update
-        run: |
-          git submodule update --init --recursive
+          submodules: true
       - uses: ./.github/workflows/setup-with-retry
       - name: caching frames
         id: frames-cache
