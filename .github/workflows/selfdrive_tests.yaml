@@ -45,7 +45,10 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY}}
     - uses: actions/checkout@v4
       with:
-        submodules: true
+        persist-credentials: false
+    - name: Submodule update
+      run: |
+        git submodule update --init --recursive
     - name: Getting LFS files
       uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e
       with:
