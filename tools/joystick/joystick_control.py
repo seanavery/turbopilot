@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 import argparse
 import threading
 import numpy as np
