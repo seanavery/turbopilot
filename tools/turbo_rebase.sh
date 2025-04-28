@@ -3,7 +3,7 @@ set -e
 
 if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
   echo "Aborting ongoing rebase..."
-  git rebase --abort
+  git rebase --abot
   git merge --abort
 fi
 
@@ -42,20 +42,40 @@ if git rev-parse --verify --quiet "turbo/${OPENPILOT_OPENDBC_COMMIT}"; then
   exit 0
 fi
 
-# Create a merge commit on the turbo branch
-git merge --no-ff -m "Merge commit ${OPENPILOT_OPENDBC_COMMIT} from origin/master into turbo branch" "${OPENPILOT_OPENDBC_COMMIT}" || {
-  echo "Merge conflict detected. Aborting merge..."
+# Attempt to create a merge commit
+echo "Creating a merge commit for commit ${OPENPILOT_OPENDBC_COMMIT} from origin/master into turbo branch..."
+if git merge --no-ff -m "Merge commit ${OPENPILOT_OPENDBC_COMMIT} from origin/master into turbo branch" "${OPENPILOT_OPENDBC_COMMIT}"; then
+  # If merge succeeds, push changes
+  echo "Merge successful. Pushing changes to turbo remote..."
+  git push turbo turbo
+else
+  # If merge conflicts occur, abort the merge and create a pull request
+  echo "Merge conflict detected. Aborting merge and creating a pull request..."
   git merge --abort
-  exit 1
-}
 
-# # Stage the updated submodule pointer
-# git add opendbc_repo
-# # Commit the submodule pointer update (only if there is a change)
-# if ! git diff-index --quiet HEAD; then
-#   echo "Committing opendbc submodule update..."
-#   git commit -m "Update opendbc submodule pointer to ${OPENPILOT_OPENDBC_COMMIT}"
-# fi
-# # Push changes to your turbo branch on your fork (turbo remote)
-# echo "Pushing changes to turbo remote..."
-# git push turbo turbo
+  # Create a new branch for the pull request
+  PR_BRANCH="merge-origin-master-${OPENPILOT_OPENDBC_COMMIT}"
+  git checkout -b "${PR_BRANCH}"
+
+  # Retry the merge on the new branch
+  git merge --no-ff -m "Merge commit ${OPENPILOT_OPENDBC_COMMIT} from origin/master into turbo branch" "${OPENPILOT_OPENDBC_COMMIT}" || {
+    echo "Merge conflict detected on PR branch. Committing conflict markers..."
+    git add -A
+    git commit -m "WIP: Resolve merge conflicts for ${OPENPILOT_OPENDBC_COMMIT}"
+  }
+
+  # Push the new branch to the turbo remote
+  git push turbo "${PR_BRANCH}"
+
+  # Create a pull request using GitHub CLI
+  # if command -v gh &> /dev/null; then
+  #   echo "Creating pull request..."
+  #   gh pr create \
+  #     --title "Merge origin/master into turbo branch" \
+  #     --body "This PR merges origin/master into turbo and resolves conflicts for commit ${OPENPILOT_OPENDBC_COMMIT}." \
+  #     --base turbo \
+  #     --head "${PR_BRANCH}"
+  # else
+  #   echo "GitHub CLI not installed. Please create the pull request manually."
+  # fi
+fi
