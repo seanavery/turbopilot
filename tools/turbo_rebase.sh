@@ -68,14 +68,14 @@ else
   git push turbo "${PR_BRANCH}"
 
   # Create a pull request using GitHub CLI
-  # if command -v gh &> /dev/null; then
-  #   echo "Creating pull request..."
-  #   gh pr create \
-  #     --title "Merge origin/master into turbo branch" \
-  #     --body "This PR merges origin/master into turbo and resolves conflicts for commit ${OPENPILOT_OPENDBC_COMMIT}." \
-  #     --base turbo \
-  #     --head "${PR_BRANCH}"
-  # else
-  #   echo "GitHub CLI not installed. Please create the pull request manually."
-  # fi
+  if command -v gh &> /dev/null; then
+    echo "Creating pull request..."
+    gh pr create \
+      --title "Merge origin/master into turbo branch" \
+      --body "This PR merges origin/master into turbo and resolves conflicts for commit ${OPENPILOT_OPENDBC_COMMIT}." \
+      --base turbo \
+      --head "${PR_BRANCH}"
+  else
+    echo "GitHub CLI not installed. Please create the pull request manually."
+  fi
 fi
