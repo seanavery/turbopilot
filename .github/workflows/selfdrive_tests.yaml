@@ -383,7 +383,13 @@ jobs:
     if: github.repository == 'commaai/openpilot' # TODO(simcity): get ui tests to work on fork
     name: Create UI Report
     runs-on:
+<<<<<<< HEAD
       - 'ubuntu-24.04'
+=======
+      - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-profile-amd64-8x16' || 'ubuntu-24.04' }}
+      - ${{ ((github.repository == 'commaai/openpilot') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.full_name == 'commaai/openpilot'))) && 'namespace-experiments:docker.builds.local-cache=separate' || 'ubuntu-24.04' }}
+    if: false  # FIXME: FrameReader is broken on CI runners
+>>>>>>> origin/master
     steps:
       - name: Start SSH Agent
         uses: webfactory/ssh-agent@v0.5.4
