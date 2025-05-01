@@ -67,6 +67,9 @@ dependencies = [
 
   # logreader
   "zstandard",
+
+  # turbo
+  "g29py"
 ]
 
 [project.optional-dependencies]
