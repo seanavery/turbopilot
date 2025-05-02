@@ -9,5 +9,9 @@ def main():
     g29.set_range(500)
     g29.set_autocenter(0.25, 0.25)
 
+    # messaging.context = messaging.Context()
+    # g29_sock = messaging.pub_sock("g29")
+    # controls_sock = messaging.pub_sock("controlsMsg")
+
 if __name__ == "__main__":
     main()
