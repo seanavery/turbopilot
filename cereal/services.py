@@ -78,6 +78,7 @@ _services: dict[str, tuple] = {
   # debug
   "uiDebug": (True, 0., 1),
   "testJoystick": (True, 0.),
+  "g29": (False, 50.),
   "alertDebug": (True, 20., 5),
   "roadEncodeData": (False, 20.),
   "driverEncodeData": (False, 20.),
