@@ -2,10 +2,10 @@
 import time
 import cereal.messaging as messaging
 
-def normalize(value):
+def normalize_accel(value):
     # input: [-1, 1]
-    # output: [0, 255]
-    return float((value + 1) / 2 * 255)
+    # output: [0, 1]
+    return float((value + 1) / 2)
 
 def main():
     # create sub socket for g29
@@ -18,10 +18,11 @@ def main():
             if msg.which() == "g29":
                 g29_data = msg.g29
                 print(f"Steering: {g29_data.steering}, Accelerator: {g29_data.accelerator}")
-                steering, accel = normalize(g29_data.steering), normalize(g29_data.accelerator)
-                print(f"Normalized Steering: {steering}, Normalized Accelerator: {accel}")
+                accel = normalize_accel(g29_data.accelerator)
+                steering = g29_data.steering
+                print(f"Normalized accel: {accel}, steering: {steering}")
                 joystick_msg = messaging.new_message('testJoystick')
-                joystick_msg.testJoystick.axes = [steering, accel]
+                joystick_msg.testJoystick.axes = [accel, steering]
                 joystick_sock.send('testJoystick', joystick_msg)
 
             else:
