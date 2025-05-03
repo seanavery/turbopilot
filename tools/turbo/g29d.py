@@ -24,6 +24,5 @@ def main():
         g29_data.g29.accelerator = state["accelerator"]
         g29_sock.send(g29_data.to_bytes())
 
-
 if __name__ == "__main__":
     main()
