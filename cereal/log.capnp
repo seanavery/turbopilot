@@ -1214,8 +1214,8 @@ struct EncodeIndex {
 }
 
 struct G29 {
-  throttle @0 :Float32;
-  brake @1 :Float32;
+  accelerator @0 :Float32;
+  steering @1 :Float32;
 }
 
 struct AndroidLogEntry {
