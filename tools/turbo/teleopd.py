@@ -19,7 +19,7 @@ def main():
                 g29_data = msg.g29
                 print(f"Steering: {g29_data.steering}, Accelerator: {g29_data.accelerator}")
                 accel = normalize_accel(g29_data.accelerator)
-                steering = g29_data.steering
+                steering = -1.0*g29_data.steering
                 print(f"Normalized accel: {accel}, steering: {steering}")
                 joystick_msg = messaging.new_message('testJoystick')
                 joystick_msg.testJoystick.axes = [accel, steering]
