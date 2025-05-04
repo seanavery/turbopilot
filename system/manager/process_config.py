@@ -107,10 +107,15 @@ procs = [
   PythonProcess("statsd", "system.statsd", always_run),
 
   # debug procs
-  NativeProcess("bridge", "cereal/messaging", ["./bridge"], notcar),
+  # NativeProcess("bridge", "cereal/messaging", ["./bridge"], notcar),
   PythonProcess("webrtcd", "system.webrtc.webrtcd", notcar),
   PythonProcess("webjoystick", "tools.bodyteleop.web", notcar),
   PythonProcess("joystick", "tools.joystick.joystick_control", and_(joystick, iscar)),
+
+  # turbo procs
+  # TODO: figure out how to pass through the ip address
+  NativeProcess("bridge", "cereal/messaging", ["./bridge", "192.168.1.14", "g29"], and_(joystick, notcar)),
+  PythonProcess("teleopd", "tools.turbo.teleopd", and_(joystick, notcar), enabled=not PC),
 ]
 
 managed_processes = {p.name: p for p in procs}
