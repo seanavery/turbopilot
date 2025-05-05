@@ -17,6 +17,9 @@ def notcar(started: bool, params: Params, CP: car.CarParams) -> bool:
 def iscar(started: bool, params: Params, CP: car.CarParams) -> bool:
   return started and not CP.notCar
 
+def gcs(started: bool, params: Params, CP: car.CarParams) -> bool:
+  return params.get_bool("GCS")
+
 def logging(started: bool, params: Params, CP: car.CarParams) -> bool:
   run = (not CP.notCar) or not params.get_bool("DisableLogging")
   return started and run
@@ -112,10 +115,14 @@ procs = [
   PythonProcess("webjoystick", "tools.bodyteleop.web", notcar),
   PythonProcess("joystick", "tools.joystick.joystick_control", and_(joystick, iscar)),
 
-  # turbo procs
+  # turbo ugv procs
   # TODO: figure out how to pass through the ip address
-  NativeProcess("bridge", "cereal/messaging", ["./bridge", "192.168.1.14", "g29"], and_(joystick, notcar)),
+  NativeProcess("turbo_ugv_bridge", "cereal/messaging", ["./bridge", "192.168.1.14", "g29"], and_(joystick, notcar)),
   PythonProcess("teleopd", "tools.turbo.teleopd", and_(joystick, notcar), enabled=not PC),
+
+  # turbo gcs procs
+  NativeProcess("turbo_gcs_bridge", "cereal/messaging", ["./bridge"], gcs),
+  PythonProcess("g29d", "tools.turbo.g29d", gcs),
 ]
 
 managed_processes = {p.name: p for p in procs}
