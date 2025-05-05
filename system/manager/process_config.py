@@ -18,7 +18,7 @@ def iscar(started: bool, params: Params, CP: car.CarParams) -> bool:
   return started and not CP.notCar
 
 def gcs(started: bool, params: Params, CP: car.CarParams) -> bool:
-  return params.get_bool("GCS")
+  return bool(params.get_bool("GCS"))
 
 def logging(started: bool, params: Params, CP: car.CarParams) -> bool:
   run = (not CP.notCar) or not params.get_bool("DisableLogging")
