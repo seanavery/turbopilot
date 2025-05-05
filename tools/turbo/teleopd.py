@@ -20,6 +20,9 @@ def main():
                 print(f"Steering: {g29_data.steering}, Accelerator: {g29_data.accelerator}")
                 accel = normalize_accel(g29_data.accelerator)
                 steering = -1.0*g29_data.steering
+                reverse = -1*normalize_accel(g29_data.reverse)
+                if reverse < -0.05:
+                    accel = reverse
                 print(f"Normalized accel: {accel}, steering: {steering}")
                 joystick_msg = messaging.new_message('testJoystick')
                 joystick_msg.testJoystick.axes = [accel, steering]

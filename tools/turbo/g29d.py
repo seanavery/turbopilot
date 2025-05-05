@@ -18,10 +18,11 @@ def main():
     while True:
         time.sleep(0.02) # 50 hz loop
         state = g29.get_state()
-        print(state["accelerator"], state["steering"])
+        print(state["accelerator"], state["steering"], state["clutch"])
         g29_data = messaging.new_message("g29")
         g29_data.g29.steering = state["steering"]
         g29_data.g29.accelerator = state["accelerator"]
+        g29_data.g29.reverse = state["clutch"]
         g29_sock.send(g29_data.to_bytes())
 
 if __name__ == "__main__":

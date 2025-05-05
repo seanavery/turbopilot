@@ -1216,6 +1216,7 @@ struct EncodeIndex {
 struct G29 {
   accelerator @0 :Float32;
   steering @1 :Float32;
+  reverse @2 :Float32;
 }
 
 struct AndroidLogEntry {
