@@ -121,6 +121,8 @@ procs = [
   PythonProcess("teleopd", "tools.turbo.teleopd", and_(joystick, notcar), enabled=not PC),
 
   # turbo gcs procs
+  NativeProcess("turbo_camerastream", "tools/camerastream", ["./compressed_vipc.py", "192.168.1.10", "--cams=1,2"], gcs),
+  NativeProcess("turbo_watch3", "selfdrive/ui", ["./watch3"], gcs),
   NativeProcess("turbo_gcs_bridge", "cereal/messaging", ["./bridge"], gcs),
   PythonProcess("g29d", "tools.turbo.g29d", gcs),
 ]
