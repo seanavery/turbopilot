@@ -7,7 +7,8 @@
   branch = turbo
 [submodule "msgq"]
   path = msgq_repo
-  url = ../../commaai/msgq.git
+  url = git@github.com:seanavery/turbomsg.git
+  branch = turbo
 [submodule "rednose_repo"]
   path = rednose_repo
   url = ../../commaai/rednose.git
